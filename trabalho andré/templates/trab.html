@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico de Saúde</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='trab.css') }}">
+</head>
+<body>
+    <div id="container">
+        <h2>Avaliação de Saúde</h2>
+        <form id="formDiagnostico">
+            <label><input type="checkbox" name="febre"> Está com febre?</label><br>
+            <label><input type="checkbox" name="tosse"> Está com tosse?</label><br>
+            <label><input type="checkbox" name="dor_cabeca"> Sente dor de cabeça?</label><br>
+            <label><input type="checkbox" name="corpo"> Sente dores no corpo?</label><br>
+            <label><input type="checkbox" name="falta_ar"> Sente falta de ar?</label><br>
+            <label><input type="checkbox" name="garganta"> Dor ou irritação na garganta?</label><br>
+            <br>
+            <button type="submit">Obter Diagnóstico</button>
+        </form>
+
+        <h3>Resultado:</h3>
+        <p id="resposta"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById("formDiagnostico");
+        const resposta = document.getElementById("resposta");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = {
+                febre: formData.has("febre"),
+                tosse: formData.has("tosse"),
+                dor_cabeca: formData.has("dor_cabeca"),
+                corpo: formData.has("corpo"),
+                falta_ar: formData.has("falta_ar"),
+                garganta: formData.has("garganta")
+            };
+
+            const response = await fetch("/api/diagnostico", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            resposta.textContent = result.resposta;
+        });
+    </script>
+</body>
+</html>
